@@ -1,0 +1,191 @@
+---
+title: Genetic contributions to multisystem inflammatory syndrome in children (MIS-C)
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: 
+  - Hua(Henry) Lu
+institute:
+  - Supervised by Dr. Delnaz Roshandel and Dr.Lisa Strug
+output: 
+  beamer_presentation: 
+    pandoc_args: ["+RTS", "-K64m","-RTS"]
+    slide_level: 2
+    toc: false
+    df_print: kable
+    includes:
+      in_header: reportformat.tex
+classoption: "aspectratio=169"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+library(tidyverse)
+library(knitr)
+```
+
+
+
+# Introduction
+
+## Background - Multisystem inflammatory syndrome in children (MIS-C)
+
+
+::: columns
+
+
+:::: column
+
+- Previously undescribed systemic inflammatory condition **temporally associated with SARS-CoV-2 exposure**. 
+
+- Affected children presented with features similar to those of **Kawasaki disease (KD)**.
+
+- Various nomenclature with differing case definitions have been proposed.
+
+::::
+
+
+:::: column
+
+```{r, out.width='90%', out.height= '49%'}
+include_graphics('../../references/figures/misc.png')
+```
+
+::::
+
+
+
+
+
+:::
+
+
+## Research questions
+
+- Are there genetic factors that predispose children to MIS-C?  
+
+- Are the genetic factors that are associated with severe COVID or KD also predispose to MIS-C?
+
+Approaches
+
+- Utilize publicly available GWAS summary statistics for COVID-19 severity and KD to construct polygenic risk scores (PRS). 
+- Test the association between the constructed scores and MIS-C status to understand the disease spectrum.
+
+
+# Methods
+
+
+## Methods - The study cohort
+
+```{r, out.width='60%', out.height= '38%'}
+include_graphics('../../references/figures/hostseq.png')
+```
+
+- MIS-C cohort (children (<18) from the Hostseq biobank)
+    * 30 MIS-C positive (COVID positive)
+    * 92 MIS-C negative (COVID positive)
+    * Whole genome sequencing was done at SK TCAG facility.
+
+
+- Additional cohorts
+    * The 1000 Genome project
+    * The Hostseq project
+
+
+## Methods - Polygenic risk score (PRS) 
+
+- Complex diseases can be caused by variations in many genes. The realization of their polygenic nature has pushed the development of comparative statistical methods.
+
+- A polygenic risk score (PRS) is an estimate of an individual’s genetic liability to a trait, calculated according to:
+
+
+$$PRS_i=\sum_{j=1}^{J} \hat \beta_j G_{ij}$$
+
+- Sum of risk alleles that an individual has, weighted by the risk allele effect sizes as estimated by a GWAS.
+
+- Base cohort & target cohort
+
+##  Methods - Pruning + Thresholding (P+T)
+
+- Pruning(clumping) - prioritizing SNPs at the locus with the smallest GWAS P value
+
+    * Clumping parameters - $r^2$=0.1, kb=500
+
+- Thresholding - keeping SNPs with a p-value less than a certain limit 
+
+    * P-value ranges - $5\times10^{-8},10^{-6},10^{-4},10^{-3},10^{-2},0.05,0.1,0.2,0.5,1$
+
+- All PRS calculations were generated via plink 1.9
+
+- 2 base cohorts (COVID-19 and KD)
+
+# Results
+
+## Results - Population stratification
+
+\begin{columns}
+\begin{column}{0.7\textwidth}
+```{r, out.width='100%', out.height= '70%'}
+include_graphics('../../figures/pca/genomemisc/kd_clive/all/pcscatter.pdf')
+```
+\end{column}
+\begin{column}{0.3\textwidth}
+```{r, out.width='80%', out.height= '40%'}
+include_graphics('../../figures/pca/genomemisc/screeplot.pdf')
+```
+\begin{itemize}
+\item $PRS_i= \beta_0+\sum_{j=1}^{4}\beta_jPC_{ij}+\epsilon_i$ 
+\end{itemize}
+\end{column}
+\end{columns}
+
+## Results - Variation explained
+
+- $\text{logit}(p_{MIS-C})= \beta_0+\sum_{j=1}^{4}\beta_jPC_{ij}+\text{res}(PRS)_i$ 
+
+
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item COVID PRS
+\end{itemize}
+```{r, out.width='90%', out.height= '70%'}
+include_graphics('../../figures/prs/hgi_hospvsnon/all/misc_var_exp_respc.pdf')
+```
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item KD PRS
+\end{itemize}
+```{r, out.width='90%', out.height= '70%'}
+include_graphics('../../figures/prs/kd_clive/all/misc_var_exp_respc.pdf')
+```
+\end{column}
+\end{columns}
+
+
+# Discussion
+
+## Summary and limitations
+
+- No significant association found between the disease and PRSs.
+
+- This study is statistically under-powered at this stage, and will utilize more samples from the Hostseq project from other sites.
+
+
+## Future work
+
+- Perform gene-based statistical tests on candidate genes from KD, COVID-19, immunology and inflammatory pathways to help understand the disease mechanism.
+
+- Apply other newly developed PRS methods for more robust estimations of the scores.
+
+
+
+## References
+
+- COVID-19 Host Genetics Initiative. Mapping the human genetic architecture of COVID-19. Nature (2021). https://doi.org/10.1038/s41586-021-03767-x
+
+- Hoggart, C., Shimizu, C., Galassini, R. et al. Identification of novel locus associated with coronary artery aneurysms and validation of loci for susceptibility to Kawasaki disease. Eur J Hum Genet 29, 1734–1744 (2021). https://doi.org/10.1038/s41431-021-00838-5
+
+- Lin, YC., Brooks, J.D., Bull, S.B. et al. Statistical power in COVID-19 case-control host genomic study design. Genome Med 12, 115 (2020). https://doi.org/10.1186/s13073-020-00818-2
+
+- https://www.cdc.gov/mis/mis-c/hcp/provider-resources/symptoms.pdf

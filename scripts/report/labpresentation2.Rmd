@@ -1,0 +1,148 @@
+---
+title: Genetic contributions to multisystem inflammatory syndrome in children (MIS-C)
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: 
+  - Hua(Henry) Lu
+institute:
+  - Supervised by Dr. Lisa Strug, Dr. Rae Yeung and Dr. Delnaz Roshandel 
+output: 
+  beamer_presentation: 
+    pandoc_args: ["+RTS", "-K64m","-RTS"]
+    slide_level: 2
+    toc: false
+    df_print: kable
+    includes:
+      in_header: reportformat.tex
+classoption: "aspectratio=169"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+library(tidyverse)
+library(knitr)
+```
+
+
+
+# Background
+
+### Background - Multisystem inflammatory syndrome in children (MIS-C)
+
+- Newly named rare but serious complication during the COVID-19 pandemic (**temporally associated with SARS-CoV-2 exposure**).
+
+- Affected children presented with fever and nonspecific symptoms that include abdominal pain, vomiting, headache, and fatigue.
+
+- Features are similar to those of **Kawasaki disease (KD)** and other inflammatory diseases.
+
+### Research questions
+
+- Aim to understand the underlying pathobiology and genetic factors that predispose children to MIS-C.
+
+## Background - Approach
+
+- A polygenic risk score (PRS) – aggregates the comprehensive structure of disease risk into one single entity.
+
+- Utilize publicly available GWAS summary statistics for COVID-19 severity, Kawasaki disease (KD) and SJIA (Systemic Juvenile idiopathic arthritis). 
+
+- Test the association between the constructed scores and MIS-C status to understand the disease spectrum and pathobiology.
+
+## Methods - The study cohort
+
+```{r, out.width='60%', out.height= '38%'}
+include_graphics('../../references/figures/hostseq.png')
+```
+
+- MIS-C cohort (children (<18) from the Hostseq biobank)
+    * 30 MIS-C positive (COVID positive) - cases
+    * 92 MIS-C negative (COVID positive) - controls
+    * Whole genome sequencing was done at SK TCAG facility.
+
+## Methods - GWAS summary statistics considered
+
+- COVID severity (hospitalization) (HGI release 5)
+
+    * Meta-analysis from 46 studies over 19 countries 
+  
+    * 5,773 cases and 15,497 controls
+
+- COVID severity (hospitalization) (HGI release 7)
+
+    * Meta-analysis from 60+ studies from 25+ countries 
+
+- Kawasaki disease (KD)
+
+    * European ancestry
+  
+    * 400 cases and 6,101 controls
+  
+- Systemic Juvenile idiopathic arthritis (SJIA)
+  
+    * 9 geographically defined and ancestrally matched case-control
+
+    * 770 cases and 6947 controls
+  
+# Updated results
+
+## Results - Population stratification - PCA
+
+
+```{r}
+include_graphics('../../figures/pca/genomemisc_cpos/kd_clive/all/pcscatter.pdf')
+```
+
+## Results - Fitted model
+
+1. For each PRS summary statistic, each p-value threshold, we
+
+    * Fitted $PRS_i= \beta_0+\sum_{j=1}^{4}\beta_jPC_{ij}+\epsilon_i$ 
+
+    * Output the residual $(\hat \epsilon_i)$ as a new variable $res(PRS)_i$
+
+    * Fit the logistic regression $\text{logit}(p_{MIS-C})= \beta_0+\sum_{j=1}^{4}\beta_jPC_{ij}+\text{res}(PRS)_i$ 
+
+2. Compared within the HGI releases
+
+3. Compared between the PRSs
+
+## Results - Variation explained comparison between r5 and r7 of HGI
+
+
+```{r}
+include_graphics('../../figures/prs/misc_cpos/hgi_compare/all/varexp_res.pdf')
+```
+
+## Results - Variation explained from different PRS
+
+```{r}
+include_graphics('../../figures/prs/misc_cpos/all/all/varexp_res.pdf')
+```
+
+
+## Results - Summary and limitations
+
+- More robust estimates in the HGI summary statistics (r5 vs r7)  could result in higher variation explained in the PRS model.
+
+- Significant association found between SJIA PRS and MIS-C status. No significant association found between the disease and other PRSs.
+
+- This study can be statistically under-powered at this stage, and will utilize more Hostseq samples from other sites.
+
+
+# Future work
+
+- Pending Hostseq joint call
+
+- Perform gene-based statistical tests on candidate genes from KD, COVID-19, SJIA, immunology and inflammatory pathways to help understand the disease mechanism.
+
+- Apply other newly developed PRS methods for more robust estimations of the scores.
+
+
+## References
+
+- COVID-19 Host Genetics Initiative. Mapping the human genetic architecture of COVID-19. Nature (2021). https://doi.org/10.1038/s41586-021-03767-x
+
+- Hoggart, C., Shimizu, C., Galassini, R. et al. Identification of novel locus associated with coronary artery aneurysms and validation of loci for susceptibility to Kawasaki disease. Eur J Hum Genet 29, 1734–1744 (2021). https://doi.org/10.1038/s41431-021-00838-5
+
+- Lin, YC., Brooks, J.D., Bull, S.B. et al. Statistical power in COVID-19 case-control host genomic study design. Genome Med 12, 115 (2020). https://doi.org/10.1186/s13073-020-00818-2
+
+- https://www.cdc.gov/mis/mis-c/hcp/provider-resources/symptoms.pdf
+

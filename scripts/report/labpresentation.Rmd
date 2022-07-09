@@ -1,0 +1,346 @@
+---
+title: Genetic contributions to multisystem inflammatory syndrome in children (MIS-C)
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: 
+  - Hua(Henry) Lu
+institute:
+  - Supervised by Dr. Lisa Strug, Dr. Rae Yeung and Dr. Delnaz Roshandel 
+output: 
+  beamer_presentation: 
+    pandoc_args: ["+RTS", "-K64m","-RTS"]
+    slide_level: 2
+    toc: false
+    df_print: kable
+    includes:
+      in_header: reportformat.tex
+classoption: "aspectratio=169"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+library(tidyverse)
+library(knitr)
+```
+
+
+
+# Introduction
+
+## Background
+
+### Multisystem inflammatory syndrome in children (MIS-C)
+
+- Previously undescribed systemic inflammatory condition **temporally associated with SARS-CoV-2 exposure**. 
+
+- Affected children presented with features similar to those of **Kawasaki disease (KD)**.
+
+- Various nomenclature with differing case definitions have been proposed.
+
+
+
+## MIS-C symptoms according to CDC
+
+```{r,out.width='65%'}
+include_graphics('../../references/figures/misc.png')
+```
+
+
+## Research questions
+
+- Are there genetic factors that predispose children to MIS-C?  
+
+- Are the genetic factors that are associated with severe COVID also predispose to MIS-C?
+
+Approaches
+
+- Using publicly available GWAS summary statistics from Host genetic initiative (HGI) analysis to construct ploygenic risk score (PRS) as a severity score. 
+
+- Utilize SNPs from PRS and candidate genes in COVID & KD to test for genetic association with MIS-C.
+
+
+# Methods
+
+
+## The study cohort
+
+- MIS-C cohort (children (<18) from the Hostseq biobank)
+    * 44 MIS-C positive (30 COVID positive and 12 COVID negative)
+    * 92 MIS-C negative (COVID positive)
+
+- Additional cohorts
+    * The 1000 Genome project - 2504 subjects
+    * The Host genetic initiative (HGI) Canadian cohort - 777 subjects
+
+
+## The Host genetic initiative (HGI)
+
+- The COVID-19 host genetics initiative is a global collaborative project. 
+
+
+- Each contributing study genotyped the samples and performed quality controls, data imputation and analysis independently.
+
+- Scalable and Accurate GEneralized mixed model (SAIGE) on chromosomes 1-22 and X. Additional suggested covariates were age, age2, sex, age*sex, and 20 first principal components.
+
+- Meta-analysis
+
+## HGI study summary
+
+
+
+
+
+::: columns
+
+
+:::: column
+
+
+
+```{r, echo=FALSE, out.width = '85%',out.height='85%'}
+include_graphics('../../references/figures/mappingdesign.jpeg')
+```
+
+::::
+
+
+:::: column
+
+
+- Three genome-wide association meta-analyses comprised of up to 49,562 COVID-19 patients and 2 million controls from 46 (Case-control) studies across 19 countries. 
+
+
+::::
+
+
+
+
+
+:::
+
+
+
+## HGI study summary
+
+
+
+```{r, echo=FALSE, out.width = '85%',out.height='85%'}
+include_graphics('../../references/figures/manplot.png')
+```
+
+
+
+
+## Additional sensitivity sub-analysis
+
+```{r,out.width='80%',out.height='65%'}
+include_graphics('../../references/figures/nonhosp.jpeg')
+```
+
+- They demonstrated that
+using population controls can be a valid and powerful strategy for host
+genetic discovery of infectious disease.
+
+- However, other studies have shown that considering controls with higher exposure rate to SARS-CoV-2 could increase statistical power.
+ 
+
+## Polygenic risk score (PRS) 
+
+- A polygenic risk score (PRS) is an estimate of an individual’s genetic liability to a trait, calculated according to:
+
+
+$$PRS_i=\sum_{j=1}^{J} \hat \beta_j G_{ij}$$
+
+- Sum of risk alleles that an individual has, weighted by the risk allele effect sizes as estimated by a GWAS.
+
+- Base cohort & target cohort
+
+## Polygenic risk score (PRS) calculation
+
+
+- Clumping - prioritizing SNPs at the locus with the smallest GWAS P value
+
+    * HLA region exclusion - Chr 6 position 25,000,000-35,000,000
+    * Clumping parameters - $r^2$=0.1, kb=500
+
+- Thresholding - keeping SNPs with a p-value less than a certain limit 
+
+    * P-value ranges - $5\times10^{-8},10^{-6},10^{-4},10^{-3},10^{-2},0.05,0.1,0.2,0.5,1$
+
+- All PRS calculations were generated via plink 1.9
+
+# Preliminary results
+
+## 1000 Genome project
+
+- Number of SNPs by p-value threshold
+
+```{r}
+pp <- read_csv('../../tables/prs/all/genome1000/range_table.csv')
+pp
+```
+
+
+
+## PRS distributions - 1000 Genomes 
+
+
+```{r}
+include_graphics('../../figures/prs/all/raw/genome1000_prs_by_ancestry.pdf')
+```
+
+## PCA - first 3 principal components
+
+
+```{r}
+include_graphics('../../figures/pca/genome1000/pcscatter.pdf')
+```
+
+## PCA - scree plot 
+
+
+::: columns
+
+
+:::: column
+
+
+```{r}
+include_graphics('../../figures/pca/genome1000/screeplot.pdf')
+```
+
+::::
+
+
+:::: column
+
+
+- 4 PCs were selected.
+
+- Explained about 85% variation.
+
+- Regression model $PRS_i= \beta_0+\sum_{j=1}^{4}\beta_jPC_{ij}+\epsilon_i$ was fitted for each p-value threshold.
+ 
+ 
+::::
+
+
+
+
+
+:::
+
+
+
+
+## PRS distributions - residualized
+
+```{r}
+include_graphics('../../figures/prs/all/res/genome1000_prs_by_ancestry.pdf')
+```
+
+
+## PRS distributions 
+
+```{r}
+include_graphics('../../figures/prs/all/raw/genome1000_prs_by_ancestry_hist.pdf')
+```
+
+## PRS distributions - residualized
+
+```{r}
+include_graphics('../../figures/prs/all/res/genome1000_prs_by_ancestry_hist.pdf')
+```
+
+
+## Combining the 1000 Genomes, HGI Canadian and MIS-C cohort
+
+- Number of SNPs (after clumping) by p-value threshold
+
+```{r}
+pp <- read_csv('../../tables/prs/all/genomehgimisc136/range_table.csv')
+pp
+```
+
+## PCA - first 3 principal components
+
+```{r}
+include_graphics('../../figures/pca/genomehgimisc136//pcscatter.pdf')
+```
+
+## PCA - scree plot 
+
+
+```{r}
+include_graphics('../../figures/pca/genomehgimisc136/screeplot.pdf')
+```
+
+## PRS distributions - residualized
+
+```{r}
+include_graphics('../../figures/prs/all/res/genomehgimisc136_prs_violin.pdf')
+```
+
+## PRS distributions - residualized
+
+```{r}
+include_graphics('../../figures/prs/all/res/genomehgimisc136_prs_hist.pdf')
+```
+
+## Subsetting the MIS-C cohort
+
+
+
+::: columns
+
+
+
+
+:::: column
+
+
+
+- $\text{logit}(p_{MIS-C})= \;\;\;\;\;\;\; \beta_0+PRS(res)_i$ 
+
+```{r}
+include_graphics('../../figures/prs/varexp_res.pdf')
+```
+
+::::
+
+
+:::: column
+
+- $\text{logit}(p_{MIS-C})= \beta_0+\sum_{j=1}^{4}\beta_jPC_{ij}+PRS_i$ 
+
+
+```{r}
+include_graphics('../../figures/prs/varexp.pdf')
+```
+
+
+::::
+
+
+
+:::
+
+
+
+# Next steps
+
+
+- Co-localization analysis on candidate genes and top variants from HGI in the MIS-C cohort.
+
+- Calculate HGI PRS in the CF lung disease data & UKBB lung disease.
+
+- Locus focus of HGI GWAS and CF lung GWAS summary stats.
+
+## References
+
+- COVID-19 Host Genetics Initiative. Mapping the human genetic architecture of COVID-19. Nature (2021). https://doi.org/10.1038/s41586-021-03767-x
+
+- Lin, YC., Brooks, J.D., Bull, S.B. et al. Statistical power in COVID-19 case-control host genomic study design. Genome Med 12, 115 (2020). https://doi.org/10.1186/s13073-020-00818-2
+
+- Maples BK, Gravel S, Kenny EE, Bustamante CD. RFMix: a discriminative modeling approach for rapid and robust local-ancestry inference. Am J Hum Genet. 2013;93(2):278-288. doi:10.1016/j.ajhg.2013.06.020
+
+- https://www.cdc.gov/mis/mis-c/hcp/provider-resources/symptoms.pdf

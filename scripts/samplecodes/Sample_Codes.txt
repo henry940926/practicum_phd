@@ -1,0 +1,119 @@
+###################################################################################################################################
+################################################# Meta-GWAS Summary Statistics ####################################################
+###################################################################################################################################
+
+### Step 1: Make sure that your base and target data are on the same built (e.g. HG38) otherwise need to do lifting 
+
+
+### Step 2: Get rid of ambiguous SNPS
+
+awk '!( ($5=="A" && $6=="T") || ($5=="T" && $6=="A") || ($5=="G" && $6=="C") || ($5=="C" && $6=="G")) {print}' Meta_GWAS_Summary_Stats.txt > Meta_GWAS_Summary_Stats_Without_Ambiguous_SNPs.txt 
+
+### Step 3: make sure there is no duplicated SNPs
+
+### Step 4: Keep only SNPs with INFO>0.8 or R2 > 0.5 (this is arbitrary)
+
+### Step 5: Keep only SNPs with MAF > 0.05 (this is arbitrary) in controls if you have this data
+
+### Step 6: Log transform the OR
+
+
+###################################################################################################################################
+################################################################## 1000 Genomes ###################################################
+###################################################################################################################################
+
+#### Step 1: Keep only SNPs from target data that pass QC
+#### You need to do this for chr 1-22 
+
+module load vcftools/0.1.14-6
+
+chr=1
+
+vcftools --gzvcf /hpf/largeprojects/tcagstor/tcagstor_tmp/mssng-collab/1000G/ilmn_vcf/CCDG_13607_B01_GRM_WGS_2019-02-19_chr${chr}.recalibrated_variants.vcf.gz \
+--positions SNP_Positions.txt \
+--remove-filtered-all \
+--recode --out Genomes_1000_chr${chr}_MAF_01
+
+#### Step 2: Convert the vcf files to plink and keep only SNPs with MAF > 0.05
+
+sed -i -e 's/*/N/g' Genomes_1000_chr${chr}_MAF_01.recode.vcf
+
+module load plink/1.9.beta3a
+
+plink --vcf Genomes_1000_chr${chr}_MAF_01.recode.vcf --make-bed --out Genomes_1000_chr${chr}_MAF_01
+plink --bfile Genomes_1000_chr${chr}_MAF_01 --maf 0.05 --make-bed --out Genomes_1000_chr${chr}
+
+
+#### Step 3: Merge all chromosomes
+
+plink --bfile Genomes_1000_chr1 --merge-list List_Of_Files_To_Merge_1000Genomes.txt --make-bed --out Genomes_1000_chr1_22
+
+# List_Of_Files_To_Merge_1000Genomes.txt
+# Genomes_1000_chr2.bed Genomes_1000_chr2.bim Genomes_1000_chr2.fam
+# Genomes_1000_chr3.bed Genomes_1000_chr3.bim Genomes_1000_chr3.fam
+# Genomes_1000_chr4.bed Genomes_1000_chr4.bim Genomes_1000_chr4.fam
+# ....
+
+#### Step 4: Check if there is any strand flips between base and target data
+
+## Find the SNPs that A1 and A2 match in 1000 Genomes and meta-GWAS
+
+## Find the SNPs that A1 and A2 are flipped but still match in 1000 Genomes and meta-GWAS
+
+## The rest of SNPs are those with alleles possibly strand flipped. Use plink to flip strands for these SNPs
+
+plink --bfile Genomes_1000_chr1_22 \
+--flip Probable_Strand_Flipped_SNPs.txt \
+--make-bed --out Genomes_1000_chr1_22_Flipped
+
+## Again check A1 and A2 the new PLINK file (Genomes_1000_chr1_22_Flipped) and get rid of the SNPs that A1 and A2 still don't match  
+
+plink --bfile Genomes_1000_chr1_22_Flipped \
+--extract SNPs_To_Keep.txt \
+--make-bed --out Genomes_1000_Final
+
+#### Step 5: You may need to change the SNP IDs to what is in the base data. You need to match SNPs by their position and alleles
+
+
+###################################################################################################################################
+############################################################## Calculate PRS ######################################################
+###################################################################################################################################
+
+#### Step 1: Do the clumping 
+
+plink \
+    --bfile Genomes_1000_Final \
+    --clump-p1 1 \
+	--clump-p2 1 \
+    --clump-r2 0.1 \
+    --clump-kb 500 \
+    --clump Summary_Stats_Final.txt \
+    --clump-snp-field SNP \
+    --clump-field P \
+    --out BioJume_1000Genomes_Clumped
+	
+
+### Step 2: Create a file with the names of the clumped SNPs (Clumped_SNPs.txt)
+
+### Step3: Create a file with SNPs and their corresponding p-values (Summary_Stats_Final_SNP_P.txt)
+
+### Step 4: Calculate PRS
+
+plink \
+    --bfile Genomes_1000_Final \
+    --score Summary_Stats_Final.txt 1 2 6 header sum center \
+    --q-score-range P_Range_List.txt Summary_Stats_Final_SNP_P.txt \
+    --extract Clumped_SNPs.txt \
+    --out 1000Genomes_PRS
+
+# P_Range_List.txt looks like this 	
+# 0.00000005	0	0.00000005
+# 0.000001	0	0.000001
+# 0.0001	0	0.0001
+# 0.001	0	0.001
+# 0.01	0	0.01
+# 0.05	0	0.05
+# 0.1	0	0.1
+# 0.2	0	0.2
+# 0.5	0	0.5
+# 1	0	1

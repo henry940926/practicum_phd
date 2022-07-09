@@ -1,0 +1,103 @@
+---
+title: Paper overview and questions
+subtitle: Mapping the human genetic architecture of COVID-19
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  beamer_presentation: 
+    pandoc_args: ["--extract-media", "./extracted-image"]
+    slide_level: 2
+    toc: false
+    df_print: kable
+
+# output: word_document
+# output: html_document
+# output: pdf_document
+classoption: "aspectratio=169"
+header-includes:
+ - \usepackage{fancyhdr}
+ - \usepackage{amsmath,latexsym}
+ - \hypersetup{colorlinks=true, linkcolor=blue}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+# knitr::opts_chunk$set(out.width = '70%') 
+library(knitr)
+library(kableExtra)
+```
+
+## Background
+
+Overview
+
+- Three genome-wide association meta-analyses comprised of up to 49,562 COVID-19 patients and 2 million controls from 46 (Case-control) studies across 19 countries. 
+
+Cohort
+
+- Different genetic ancestries, including European, Admixed American, African, Middle Eastern, South Asian and East Asian individuals 
+
+Controls
+
+- Controls for all three analyses were selected as genetically ancestry-matched samples without known SARS-CoV-2 infection
+
+
+## Background
+
+```{r,out.width='50%',out.height='65%'}
+include_graphics('../../figures/studydesign.png')
+```
+
+- Total of 13 independent genome-wide significant loci associated with COVID-19 (P< 5 × $10^{-8}$/3)
+
+## Methods
+
+- Meta-analysis was done with fixed effects inverse variance weighting.
+
+- Heterogeneity between estimates from contributing studies were tested using Cochran’s Q test
+
+- Each contributing study genotyped the samples and performed quality controls, data imputation and analysis independently, but following consortium recommendations
+
+- GEneralized mixed model (SAIGE) on chromosomes 1-22 and X. The suggested covariates were age, age2, sex, age*sex, and 20 first principal components.
+
+
+
+## Additional sensitivity sub-analysis
+
+
+- hospitalized COVID-19 cases vs non-hospitalized COVID-19 cases n=5,773 and n=15,497 controls
+
+-  showing that
+using population controls can be a valid and powerful strategy for host
+genetic discovery of infectious disease
+
+
+## Additional sensitivity sub-analysis
+
+```{r,out.width='80%',out.height='65%'}
+include_graphics('../../figures/nonhos.png')
+```
+
+## Phenome-wide association
+
+- 9 traits associated with hospitalized COVID-19 and SARS-CoV-2 reported
+infection 
+
+- Two-sample Mendelian randomization revealed 8 exposure — COVID-19 trait-pairs
+of a causal association.
+
+- Five of these associations were robust to potential violations of the
+underlying assumptions of MR
+
+
+## Questions
+
+- No summary statistics for all studies (could not find out why). Only available leaving 1 or 2 studies out.
+
+https://app.covid19hg.org/?analysisId=r5-leave_23andme-B1_ALL
+
+https://www.covid19hg.org/results/r5/
+
+- Which summary statistics to use?
+
+- Which version to use (most recent is r6 but no publication)?
+

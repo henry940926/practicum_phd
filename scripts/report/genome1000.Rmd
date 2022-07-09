@@ -1,0 +1,109 @@
+---
+title: 1000 Genome Project Update 
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  beamer_presentation: 
+    pandoc_args: ["+RTS", "-K64m","-RTS"]
+    slide_level: 2
+    toc: false
+    df_print: kable
+    includes:
+      in_header: reportformat.tex
+classoption: "aspectratio=169"
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+library(tidyverse)
+library(knitr)
+```
+
+# Data preprocessing
+
+## HGI summary statistics
+
+```{r}
+#1
+hgi <- read_table('../../data/raw/hgi/hospvsnon/all/v38/COVID19_HGI_B1_ALL_leave_UKBB_23andme_20210107.txt')
+hgin <- nrow(hgi)
+#2
+filter_amb <- read_table('../../data/interim/hgi/snp_filter.txt', col_names = F)
+filter_ambn <- nrow(filter_amb)
+
+```
+
+1. Number of SNPs in the HGI summary statistics -> `r hgin`
+
+2. After filtering out the ambiguous SNPs from 1 -> `r filter_ambn`
+
+## 1000 Genome VCF files
+
+```{r}
+genome1000 <- read_table('../../data/interim/genome1000/plink_merged/merged1_22.bim',col_names = F)
+genome1000n <- nrow(genome1000)
+flip <- read_table('../../data/interim/genome1000/plink_merged_filtered/all/final.bim',col_names = F)
+flipn <- nrow(flip)
+```
+
+
+1. The intersection of HGI SNPs and 1000 Genome SNPs with MAF > 0.05 -> `r genome1000n`
+
+2. After checking for strand flipping and different minor allele names -> `r flipn`
+
+## Excluding the HLA region
+
+```{r}
+hla <- read_table('../../data/interim/genome1000/plink_merged_filtered/nohla/snps_to_keep.txt',col_names = F)
+hlan <- nrow(hla)
+```
+1. Chr6 position 25,000,000-35,000,000 were excluded.
+
+2. Number of SNPs -> `r hla`. 
+
+## Clumping
+
+```{r}
+clump <- read_table('../../data/processed/genome1000/clumped/nohla/clump.clumped')
+clumpn <- nrow(clump)
+
+```
+- $r^2$ 0.1, kb=500
+
+- `r clumpn` SNPs remained after clumping
+
+## Thresholding
+
+- A summary of # of SNPs below certain thresholds (after clumping)
+
+```{r}
+breaks <- list.files('../../data/processed/genome1000/prs/nohla',pattern = '*.profile$',full.names = T) %>% 
+  str_extract('(0\\.)?\\d+(?=.profile)') %>% 
+  as.numeric() %>% 
+  sort() %>% 
+  c(0,.)
+labels <- str_c('<',breaks[-1])
+clump_s <- clump %>% 
+  mutate(
+    `P threshold` = cut(P,breaks = breaks, labels = labels)
+  ) %>% 
+  count(`P threshold`) %>% 
+  mutate(
+    n = cumsum(n)
+  )
+clump_s
+```
+
+
+## PRS distributions - Histogram
+
+```{r}
+include_graphics('../../figures/genome1000/prs/nohla/prs_by_ancestry_hist.pdf')
+```
+
+## PRS distributions - Violin plot
+
+```{r}
+include_graphics('../../figures/genome1000/prs/nohla/prs_by_ancestry.pdf')
+```
+
+
+

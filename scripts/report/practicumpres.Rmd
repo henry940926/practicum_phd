@@ -1,0 +1,171 @@
+---
+title: Genetic contributions to multisystem inflammatory syndrome in children (MIS-C)
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: 
+  - Hua(Henry) Lu
+  - supervised by Dr. Lisa Strug
+institute:
+  - Division of Biostatistics, DLSPH, University of Toronto  
+  - The Hospital for Sick Children
+output: 
+  beamer_presentation: 
+    pandoc_args: ["--extract-media", "./extracted-image"]
+    slide_level: 2
+    toc: false
+    df_print: kable
+    includes:
+      in_header: reportformat.tex
+classoption: "aspectratio=169"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+# knitr::opts_chunk$set(out.width = '70%') 
+library(knitr)
+library(kableExtra)
+```
+
+# Introduction
+
+## Background
+
+- Previously undescribed systemic inflammatory condition **temporally associated with SARS-CoV-2 exposure**. 
+
+- Affected children presented with features similar to those of **Kawasaki disease (KD)**.
+
+- Various nomenclature with differing case definitions have been proposed.
+
+- Ongoing debate continues regarding whether MIS-C is similar or different from KD, and whether SARS-CoV-2 exposure triggers the disease phenotypes.
+
+## MIS-C symptoms according to CDC
+
+```{r,out.width='65%'}
+include_graphics('../../figures/misc.png')
+```
+
+
+## Research questions
+
+- Are there genetic factors that predispose children to MIS-C?  
+
+- Are the genetic factors that are associated with severe COVID also predispose to MIS-C? or COVID symptoms in children?
+
+Approaches
+
+- Using publicly available GWAS summary statistics from HGI analysis to construct PRS as a severity score. 
+
+- Utilize SNPs from PRS and candidate genes in COVID & KD to test for genetic association with MIS-C.
+
+- Testing the PRS in MIS-C and COVID children.
+
+
+
+
+
+# Methods
+
+
+## The study cohort
+
+Prospective cohorts of children (<18) from the Hostseq biobank.
+
+- MIS-C samples (N=43):
+
+MIS-C diagnosed/suspected
+
+- COVID+ samples (N=91):
+
+COVID+ but not MIS-C
+
+- Whole genome sequencing was done on 134 samples at SK TCAG facility.
+
+
+
+## The HGI cohort 
+
+::: columns
+
+:::: column
+
+
+- 3 case-control meta analyses + additional sensitivity analysis comparing *hospitalized COVID cases vs non-hospitalized COVID*.
+
+- Other studies have shown that considering controls with higher exposure rate to SARS-CoV-2 could increase statistical power.
+ 
+ 
+::::
+
+:::: column
+
+
+```{r, echo=FALSE, out.width = '95%'}
+include_graphics('../../figures/mappingdesign.png')
+```
+
+::::
+
+
+
+:::
+
+
+## Polygenic risk score (PRS) 
+
+- A polygenic risk score (PRS) is an estimate of an individual’s genetic liability to a trait, calculated according to:
+
+
+$$PRS_i=\sum_{j=1}^{J} \hat \beta_j G_{ij}$$
+
+- Sum of risk alleles that an individual has, weighted by the risk allele effect sizes as estimated by a GWAS.
+
+- Base cohort & target cohort
+
+## Polygenic risk score (PRS) calculation
+
+
+- Two classical methods:
+
+1. Shrinkage of GWAS effect size estimates
+
+2. Controlling for Linkage disequilibrium (LD)
+
+ a) Clumping - prioritizing SNPs at the locus with the smallest GWAS P value
+
+ b) Thresholding - keeping SNPs with a p-value less than a certain limit 
+
+## Single-SNP tests
+
+- Candidate genes will be obtained from published GWAS studies for COVID and KD.
+
+- After the clumping steps from generating PRS, remaining SNPs will be closer to linkage equilibrium.
+
+- Remaining SNPs that are in the candidate genes will be tested with Bonferroni correction.
+
+
+
+# Stage of work
+
+## Stage of work
+
+
+- Literature reviews on PRS methods.
+
+- Working to compile the clinical data and the genetic data for the MIS-C and COVID+ cohorts.
+
+
+- Gathering the data from HGI needed to construct the PRS.
+
+
+- Will get the VCF for the sequencing data from the Hostseq project.
+
+
+
+
+
+## References
+
+- COVID-19 Host Genetics Initiative. Mapping the human genetic architecture of COVID-19. Nature (2021). https://doi.org/10.1038/s41586-021-03767-x
+
+- Lin, YC., Brooks, J.D., Bull, S.B. et al. Statistical power in COVID-19 case-control host genomic study design. Genome Med 12, 115 (2020). https://doi.org/10.1186/s13073-020-00818-2
+
+- https://www.cdc.gov/mis/mis-c/hcp/provider-resources/symptoms.pdf

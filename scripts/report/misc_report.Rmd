@@ -1,0 +1,104 @@
+---
+title: MIS-C Project Update 
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  beamer_presentation: 
+    pandoc_args: ["+RTS", "-K64m","-RTS"]
+    slide_level: 2
+    toc: false
+    df_print: kable
+    includes:
+      in_header: reportformat.tex
+classoption: "aspectratio=169"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
+library(tidyverse)
+library(knitr)
+```
+
+```{r}
+# prs <- read_csv('../../data/processed/genome1000/prs/nohla/prs_df.csv')
+```
+
+# Background
+
+- MIS-C cohort
+    * 92 MIS-C positive and COVID positive
+    * 14 MIS-C positive and COVID negative
+    * 30 MIS-C negative and COVID positive
+
+- HGI Canadian cohort
+    * 777 samples
+    
+- 1000 Genome cohort
+    * 2504 samples
+    
+- PRS generated from HGI summary statistics (hospitalized vs non-hospitalized)
+
+
+
+# Preprocess
+
+## Number of SNPs break down in each step
++------------+-----------+----------+-------------+------------+---------+----------+
+|            | Filter by | MAF      | Exclude     | Exclude    | Merged  | After    |
+|            | HGI SNPs  | >0.05    | mis-matches | HLA region |         | clumping |
++------------+-----------+----------+-------------+------------+---------+----------+
+| MIS-C      | 5896386   | 4663790  | 4663786     | 4633346    |         |          |
++------------+-----------+----------+-------------+------------+---------+----------+
+| HGICA      | 5630565   | 4318367  | 4318360     | 4289152    | 3921924 | 144086   |
++------------+-----------+----------+-------------+------------+---------+----------+
+| Genome1000 | 4504999   | 4504999  | 4504989     | 4474762    |         |          |
++------------+-----------+----------+-------------+------------+---------+----------+
+
+
+- HLA region - Chr6 position 25,000,000-35,000,000.
+
+- Clumping parameters - $r^2$ 0.1, kb=500
+
+
+## Number of SNPs by p-value threshold - Merged cohort
+
+
+```{r}
+clump <- read_table('../../data/processed/genomehgimisc136/clumped/nohla/clump.clumped',col_names = T)
+breaks <- list.files('../../data/processed/genomehgimisc136/prs/nohla',pattern = '*.profile$',full.names = T) %>% 
+  str_extract('(0\\.)?\\d+(?=.profile)') %>% 
+  as.numeric() %>% 
+  sort() %>% 
+  c(0,.)
+labels <- str_c('<',breaks[-1])
+clump_s <- clump %>% 
+  mutate(
+    `P threshold` = cut(P,breaks = breaks, labels = labels)
+  ) %>% 
+  count(`P threshold`) %>% 
+  mutate(
+    n = cumsum(n)
+  )
+clump_s
+```
+
+
+# Preliminary results
+
+## PRS distributions - Violin plot
+
+```{r}
+include_graphics('../../figures/prs/genomehgimisc136/nohla/prs_violin.pdf')
+```
+
+
+## PRS distributions - Histogram
+
+```{r}
+include_graphics('../../figures/prs/genomehgimisc136/nohla/prs_hist.pdf')
+```
+
+## Variation explained - MIS-C vs COVID+
+
+```{r}
+include_graphics('../../figures/prs/varexp.pdf')
+```
