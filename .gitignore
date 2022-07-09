@@ -1,0 +1,17 @@
+*.DS_Store
+.Rproj.user
+.snakemake/
+*.vcf*
+data/interim/*
+data/processed/*
+*.log
+*.missnp
+*jobout*
+*.done
+data/raw/hgica/*
+data/raw/misc136/*
+.Rhistory
+test/*
+*.ipynb_checkpoints
+*temp
+*TOY*
