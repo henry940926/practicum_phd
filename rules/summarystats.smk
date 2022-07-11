@@ -26,7 +26,34 @@ rule filtersnps:
     --output-f {output.snp} \
     --output-r {output.ranges}'
 
+PUB_GWAS_SNP_N = 'data/interim/snp_counts/{prs_study}/gwas_snp_counts_ori.txt'
+
+rule count_snps_hg38:
+    input: GWASSUMMARY
+    output: PUB_GWAS_SNP_N
+    threads: n_threads_s
+    resources: 
+        mem=n_mem_s
+    shell: 
+        '''
+        wc -l {input} | awk '{{print $1-1}}' > {output}
+        '''
+
+PUB_GWAS_SNP_N_FINAL = 'data/interim/snp_counts/{prs_study}/gwas_snp_counts_final.txt'
+
+rule count_snps_hg38_final:
+    input: FILTERED_RANGE
+    output: PUB_GWAS_SNP_N_FINAL
+    threads: n_threads_s
+    resources: 
+        mem=n_mem_s
+    shell: 
+        '''
+        wc -l {input} | awk '{{print $1}}' > {output}
+        '''
+
 
 rule summary_stats:
     input:
-        expand(FILTERED_SNP, prs_study = PRS_STUDY)
+        expand(FILTERED_SNP, prs_study = PRS_STUDY),
+        expand(PUB_GWAS_SNP_N, prs_study = PRS_STUDY)

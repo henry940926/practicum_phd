@@ -16,7 +16,8 @@ args <- parser$parse_args()
 # debug
 
 # args <- list()
-# args$input <- 'data/result/genomehgimisc136/pca/nohla/prs_clin_pc_reg.csv'
+# args$input <- 'data/result/genomehgimisc136/pca/kd_clive/all/prs_clin_pc_reg.csv'
+# args$input_ptype <- 'raw'
 
 message('Loading data')
 
@@ -115,12 +116,13 @@ t_test_results <- data %>%
   ) %>% 
   ungroup()
 
-pl_final <- pl + 
-  stat_pvalue_manual(t_test_results, 
-                     label.size = 1,
-                     tip.length = 0.005,
-                     label = 'p'
-  )
+# removed temporarily for p-values
+# pl <- pl + 
+#   stat_pvalue_manual(t_test_results, 
+#                      label.size = 1,
+#                      tip.length = 0.005,
+#                      label = 'p'
+#   )
 # pl_final
 
 # Plot the histogram
@@ -151,5 +153,5 @@ pl_hist <- Reduce( `|`, pl_data$pl_hist)
 
 message('Writing outputs')
 
-ggsave(args$output, pl_final, width = 9, height = 6)
+ggsave(args$output, pl, width = 9, height = 6)
 ggsave(args$output_hist, pl_hist, width = 12, height = 6)

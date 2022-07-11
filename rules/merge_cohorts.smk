@@ -83,6 +83,20 @@ rule merge_combined_cohorts:
         --merge-list {input.mlist} \
         --make-bed --out {params.o}")
 
+SNP_COUNT_COHORT_COMB = 'data/interim/snp_counts/{prs_study}/{cohort_comb}/{region}/snp_counts.txt'
+
+rule count_snp_cohort_comb:
+    input: MERGED_COMBINE_COHORTS + '.bim'
+    output: SNP_COUNT_COHORT_COMB
+    threads: n_threads_s
+    resources: 
+        mem=n_mem_s
+    shell: 
+        '''
+        wc -l {input} | awk '{{print $1-1}}' > {output}
+        '''
+
+
 
 rule merge_cohorts:
     input:
@@ -90,7 +104,11 @@ rule merge_cohorts:
         expand(MERGED_COMBINE_COHORTS_EXT, cohort_comb=COHORT_COMB.keys(),
         prs_study=PRS_STUDY,
         region=REGIONS,
-        ext = EXTENSIONS)
+        ext = EXTENSIONS),
+        expand(SNP_COUNT_COHORT_COMB, cohort_comb=COHORT_COMB.keys(),
+        prs_study=PRS_STUDY,
+        region=REGIONS)
+
 
 
 

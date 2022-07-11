@@ -20,12 +20,14 @@ rule plot_prs_genome1000:
 
 
 
-PL_PRS_VIO = 'figures/prs/genomehgimisc136/{prs_study}/{region}/{ptype}/genomehgimisc136_prs_violin.pdf'
-PL_PRS_HIST = 'figures/prs/genomehgimisc136/{prs_study}/{region}/{ptype}/genomehgimisc136_prs_hist.pdf'
+PL_PRS_VIO = 'figures/prs/{cohort}/{prs_study}/{region}/{ptype}/genomehgimisc136_prs_violin.pdf'
+PL_PRS_HIST = 'figures/prs/{cohort}/{prs_study}/{region}/{ptype}/genomehgimisc136_prs_hist.pdf'
+
+COHORT_SUB_COMPARISON_ACROSS = ['genomehgimisc136','genomemisc_cpos']
 
 rule plot_prs_genomehgimisc136:
     input:
-        expand(PRS_CLIN_PC_REG, cohort = 'genomehgimisc136', allow_missing=True)
+        PRS_CLIN_PC_REG
     output:
         vio = PL_PRS_VIO,
         hist = PL_PRS_HIST
@@ -47,8 +49,8 @@ rule prs_plot:
         expand(PRS_PLOT_HIST_GENOME1000, region = REGIONS, 
         prs_study=PRS_STUDY, ptype = PTYPE),
         # misc+hgica+genome1000
-        expand(PL_PRS_VIO, region = REGIONS,
+        expand(PL_PRS_VIO, region = REGIONS, cohort = COHORT_SUB_COMPARISON_ACROSS,
         prs_study=PRS_STUDY, ptype = PTYPE),
-        expand(PL_PRS_HIST, region = REGIONS,
+        expand(PL_PRS_HIST, region = REGIONS, cohort = COHORT_SUB_COMPARISON_ACROSS,
         prs_study=PRS_STUDY, ptype = PTYPE)
 

@@ -6,9 +6,11 @@ rule all:
     input:
         'workflow.done'
 
+# settings on hpf
 n_threads = 32
 n_mem = 32
 
+# s stands for small computing settings
 n_threads_s = 10
 n_mem_s = 16
 
@@ -56,12 +58,15 @@ PRS_COMB = {
 
 }
 
-
+# Plink extensions
 EXTENSIONS = ['bim','bed','fam']
 
 MAF = 0.05
+
+# Regions
 REGIONS = ['all','nohla']
 
+# Type of PRS (raw vs residualized by PCs)
 PTYPE = ['raw','res']
 
 # Preprocess
@@ -97,9 +102,16 @@ include: 'rules/reports.smk'
 
 ruleorder: merged_filter1 > merge_combined_cohorts
 ruleorder: maf_all_pca > merge_combined_cohorts_pca
+ruleorder: count_pca_snp_cohort > count_pca_snp_cohort_comb
+ruleorder: count_snp_cohort > count_snp_cohort_comb
 
 rule _all:
     input:
+        rules.summary_stats.input,
+        rules.process.input,
+        rules.process_pca.input,
+        rules.merge_cohorts.input,
+        rules.merge_cohorts_pca.input,
         rules.prs.input,
         rules.pca.input,
         rules.prs_plot.input,

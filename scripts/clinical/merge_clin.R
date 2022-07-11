@@ -15,12 +15,13 @@ message('Loading data')
 # args <- list()
 # args$input_misc <- 'data/raw/clinical/seqlist.xlsx'
 # args$input_genome <- 'data/raw/genome1000/Subjects.xlsx'
+# args$input_hgica <- 'data/raw/hgica/supplementary.tsv'
 
 #a Read the clinical data
 
 misc <- read_excel(args$input_misc)
 genome1000 <- read_excel(args$input_genome)
-hgica <- read_table(args$input_hgica)
+hgica <- read_tsv(args$input_hgica)
 
 
 misc <- misc %>% 

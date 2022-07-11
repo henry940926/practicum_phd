@@ -91,11 +91,25 @@ rule merge_combined_cohorts_pca:
         --merge-list {input.mlist} \
         --make-bed --out {params.o}")
 
+PCA_SNP_COUNT_COHORT_COMB = 'data/interim/snp_counts/pca/{cohort_comb}/pca_snp_counts.txt'
+
+rule count_pca_snp_cohort_comb:
+    input: MERGED_COMBINE_COHORTS_PCA + '.bim'
+    output: PCA_SNP_COUNT_COHORT_COMB
+    threads: n_threads_s
+    resources: 
+        mem=n_mem_s
+    shell: 
+        '''
+        wc -l {input} | awk '{{print $1-1}}' > {output}
+        '''
 
 rule merge_cohorts_pca:
     input:
         expand(MERGED_COMBINE_COHORTS_PCA_EXT, 
         ext = EXTENSIONS,
+        cohort_comb=COHORT_COMB.keys()),
+        expand(PCA_SNP_COUNT_COHORT_COMB, 
         cohort_comb=COHORT_COMB.keys())
 
 

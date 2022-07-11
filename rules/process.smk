@@ -235,10 +235,25 @@ rule merged_filter1:
         --extract {input.snps} \
         --make-bed --out {params.o}")
 
+SNP_COUNT_COHORT = 'data/interim/snp_counts/{prs_study}/{cohort}/{region}/snp_counts.txt'
+
+rule count_snp_cohort:
+    input: MERGE_FILTERED1 + '.bim'
+    output: SNP_COUNT_COHORT
+    threads: n_threads_s
+    resources: 
+        mem=n_mem_s
+    shell: 
+        '''
+        wc -l {input} | awk '{{print $1-1}}' > {output}
+        '''
 
 
 rule process:
     input:
         expand(MERGE_FILTERED1_EXT,cohort = COHORTS,
         prs_study = PRS_STUDY,
-        ext = EXTENSIONS, region = REGIONS)
+        ext = EXTENSIONS, region = REGIONS),
+        expand(SNP_COUNT_COHORT,cohort = COHORTS,
+        prs_study = PRS_STUDY,
+        region = REGIONS)

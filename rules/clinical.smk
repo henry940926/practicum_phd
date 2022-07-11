@@ -4,7 +4,9 @@ CLIN_MERGED = 'data/interim/clinical/merged/data.csv'
 
 CLIN_MISC = 'data/raw/clinical/seqlist.xlsx'
 CLIN_GENOME1000 = 'data/raw/genome1000/Subjects.xlsx'
-CLIN_HGICA = 'data/raw/hgica/all.cov'
+
+# HGI CA clinical data updated (2022 June, edited July)
+CLIN_HGICA = 'data/raw/hgica/supplementary.tsv'
 rule merge_clinical:
     input:
         misc1 = CLIN_MISC,

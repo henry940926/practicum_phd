@@ -173,6 +173,38 @@ rule extract_pca_snps:
 
 PCAFINAL = PCA5
 PCAFINAL_EXT = PCAFINAL+'.{ext}'
+
+# added snp counts - July 2022
+PCA_SNP_COUNT = 'data/interim/snp_counts/pca/ori_hg38.txt'
+
+rule count_pca_snp:
+    input: PCA_RANGE
+    output: PCA_SNP_COUNT
+    threads: n_threads_s
+    resources: 
+        mem=n_mem_s
+    shell: 
+        '''
+        wc -l {input} | awk '{{print $1-1}}' > {output}
+        '''
+
+PCA_SNP_COUNT_COHORT = 'data/interim/snp_counts/pca/{cohort}/pca_snp_counts.txt'
+
+rule count_pca_snp_cohort:
+    input: PCA5 + '.bim'
+    output: PCA_SNP_COUNT_COHORT
+    threads: n_threads_s
+    resources: 
+        mem=n_mem_s
+    shell: 
+        '''
+        wc -l {input} | awk '{{print $1-1}}' > {output}
+        '''
+
+
+
 rule process_pca:
     input:
-        expand(PCA5_EXT, ext = EXTENSIONS, cohort = COHORTS)
+        expand(PCA5_EXT, ext = EXTENSIONS, cohort = COHORTS),
+        PCA_SNP_COUNT,
+        expand(PCA_SNP_COUNT_COHORT, cohort = COHORTS)
